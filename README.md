@@ -1,9 +1,10 @@
 <div align="center">
 
-# 🎬 IMDB Movie Review Sentiment Analysis
-## Deep Learning Practical — ANN, SimpleRNN, LSTM, Stacked LSTM & GRU
+# 🎬 IMDB Sentiment Analysis with RNN, LSTM & GRU
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&pause=1000&color=7B68EE&center=true&vCenter=true&width=950&lines=Deep+Learning+for+Sentiment+Analysis;ANN+%E2%86%92+SimpleRNN+%E2%86%92+LSTM+%E2%86%92+GRU;Understanding+BPTT+and+Gradient+Problems;Final+Best+Model%3A+GRU+%F0%9F%8F%86" alt="Typing SVG" />
+### 🧠 Deep Learning PR-5 · End-to-End Sequence Modeling Project
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=23&pause=900&color=7B68EE&center=true&vCenter=true&width=980&lines=Sentiment+Analysis+with+Deep+Learning;ANN+%E2%86%92+SimpleRNN+%E2%86%92+LSTM+%E2%86%92+GRU;BPTT+%7C+Gradient+Flow+%7C+Sequence+Modeling;Best+Final+Model%3A+GRU+%F0%9F%8F%86" alt="Typing animation" />
 
 <br>
 
@@ -16,211 +17,229 @@
 
 <br>
 
-### ⭐ Complete implementation and explanation of all practical tasks ⭐
+**A practical study of recurrent neural networks for binary movie-review sentiment classification.**
 
 </div>
+
+---
+
+## 🌟 Project at a Glance
+
+<table>
+<tr>
+<td align="center"><b>🎞️ Dataset</b><br>IMDB Movie Reviews</td>
+<td align="center"><b>🧹 Clean Reviews</b><br>49,582</td>
+<td align="center"><b>🏋️ Training Samples</b><br>39,665</td>
+<td align="center"><b>🧪 Test Samples</b><br>9,917</td>
+</tr>
+<tr>
+<td align="center"><b>🔤 Vocabulary</b><br>10,000</td>
+<td align="center"><b>📏 MAXLEN</b><br>600</td>
+<td align="center"><b>🤖 Models</b><br>5</td>
+<td align="center"><b>🏆 Best Model</b><br>GRU</td>
+</tr>
+</table>
+
+> **Final GRU result:** **89.73% test accuracy**, **89.78% F1**, and **0.9595 ROC-AUC**.
 
 ---
 
 # 📌 Project Overview
 
-This project performs **binary sentiment analysis** on the IMDB Movie Review dataset using deep-learning sequence models.
+This notebook implements **sentiment analysis on IMDB movie reviews** and progressively builds understanding from basic text preprocessing to gated recurrent neural networks.
 
-The purpose is not only to train a sentiment classifier, but also to understand the complete working of recurrent neural networks. The practical starts with text preprocessing and an ANN baseline, then studies a SimpleRNN manually and with Keras, investigates **Backpropagation Through Time (BPTT)** and gradient problems, and finally implements **LSTM**, **Stacked LSTM**, and **GRU**.
+The work is organized into seven main tasks:
 
-The final part compares every trained model using multiple evaluation metrics and investigates model behaviour on reviews of different lengths, misclassified examples, and custom unseen sentences.
+1. **Text Loading, Cleaning, Tokenisation & Padding**
+2. **RNN Intuition, ANN Baseline & Manual Forward Propagation**
+3. **Types of RNN & SimpleRNN Sentiment Analysis**
+4. **Backpropagation Through Time, Vanishing & Exploding Gradients**
+5. **Long Short-Term Memory (LSTM)**
+6. **Gated Recurrent Unit (GRU)**
+7. **Final Comparison, Error Analysis & Inference**
+
+The project does more than compare accuracy. It also studies **hidden states, parameter counts, gradient behaviour, sequence length, gradient clipping, review length, false positives/false negatives, and custom text inference**.
 
 ---
 
-# 🎯 Main Objectives
+# 🎯 Business / ML Problem
 
-- Prepare raw text data for deep-learning models.
-- Understand tokenization, OOV handling, padding and embeddings.
-- Build a non-recurrent ANN baseline.
-- Understand RNN forward propagation mathematically.
-- Verify a manual RNN implementation against Keras.
-- Understand one-to-one, one-to-many, many-to-one and many-to-many RNN structures.
-- Train a SimpleRNN sentiment classifier.
-- Understand BPTT.
-- Study vanishing and exploding gradients.
-- Demonstrate gradient clipping.
-- Understand LSTM gates and cell state.
-- Implement a manual LSTM forward pass.
-- Train single and stacked LSTM models.
-- Understand GRU update/reset gates.
-- Train a GRU model.
-- Compare RNN, LSTM and GRU gradient behaviour.
-- Study the effect of hidden-unit size.
-- Compare all final models.
-- Analyze ROC curves and review-length performance.
-- Inspect false positives and false negatives.
-- Build a reusable sentiment prediction function.
+Movie-review platforms contain large amounts of written feedback. Reading every review manually is slow and difficult at scale.
+
+The machine-learning problem is:
+
+> **Given the text of a movie review, predict whether its sentiment is Positive or Negative.**
+
+This is a **binary many-to-one sequence-classification problem**:
+
+```text
+Many words / tokens
+        ↓
+One sentiment label
+```
 
 ---
 
 # 🗂️ Dataset
 
-The project uses the **IMDB Dataset of 50K Movie Reviews**.
+The notebook uses the **IMDB Dataset of 50K Movie Reviews**.
 
-🔗 [IMDB Dataset of 50K Movie Reviews — Kaggle](https://www.kaggle.com/datasets/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews)
+🔗 [Kaggle — IMDB Dataset of 50K Movie Reviews](https://www.kaggle.com/datasets/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews)
 
-The raw dataset contains:
+The main source columns are:
 
-| Feature | Description |
+| Column | Meaning |
 |---|---|
-| `review` | Movie-review text |
-| `sentiment` | Positive or negative sentiment |
+| `review` | Raw movie-review text |
+| `sentiment` | `positive` or `negative` |
 
-The sentiment target is converted to:
+After duplicate removal and feature preparation, the notebook reports:
 
 ```text
-Negative → 0
-Positive → 1
+Dataset Shape    : (49,582, 5)
+Training Samples : 39,665
+Testing Samples  : 9,917
+Vocabulary Size  : 10,000
+MAXLEN           : 600
 ```
 
 ---
 
-# 🔄 Complete Project Workflow
+# 🔄 Complete Workflow
 
 ```text
-Raw IMDB Dataset
-        │
-        ▼
-Data Cleaning
-        │
-        ▼
-Review-Length Analysis
-        │
-        ▼
-Label Encoding
-        │
-        ▼
-Train / Test Split
-        │
-        ▼
-Tokenizer Fit on Training Data
-        │
-        ▼
-Text → Integer Sequences
-        │
-        ▼
-Padding / Truncation
-        │
-        ▼
-Embedding Layer
-        │
-        ├──────────────┐
-        ▼              ▼
- ANN Baseline      Recurrent Models
-                       │
-             ┌─────────┼─────────┐
-             ▼         ▼         ▼
-         SimpleRNN    LSTM      GRU
-                       │
-                       ▼
-                 Stacked LSTM
-                       │
-                       ▼
-              Final Model Comparison
-                       │
-                       ▼
-              Error & Length Analysis
-                       │
-                       ▼
-                 Custom Inference
+                    ┌──────────────────────┐
+                    │   Raw IMDB Reviews   │
+                    └──────────┬───────────┘
+                               ↓
+                    ┌──────────────────────┐
+                    │ Remove Duplicates    │
+                    └──────────┬───────────┘
+                               ↓
+                    ┌──────────────────────┐
+                    │   Clean Raw Text     │
+                    └──────────┬───────────┘
+                               ↓
+                    ┌──────────────────────┐
+                    │ Review-Length Study  │
+                    └──────────┬───────────┘
+                               ↓
+                    ┌──────────────────────┐
+                    │ Train / Test Split   │
+                    └──────────┬───────────┘
+                               ↓
+                    ┌──────────────────────┐
+                    │ Training Tokenizer   │
+                    └──────────┬───────────┘
+                               ↓
+                    ┌──────────────────────┐
+                    │ Sequences + Padding  │
+                    └──────────┬───────────┘
+                               ↓
+            ┌──────────────────┼───────────────────┐
+            ↓                  ↓                   ↓
+       ANN Baseline        SimpleRNN          Gated RNNs
+                                                   │
+                                        ┌──────────┴─────────┐
+                                        ↓                    ↓
+                                      LSTM                  GRU
+                                        ↓
+                                  Stacked LSTM
+            └──────────────────┬───────────────────┘
+                               ↓
+                    ┌──────────────────────┐
+                    │  Final Evaluation    │
+                    └──────────┬───────────┘
+                               ↓
+              ROC · Length · Errors · Inference
 ```
 
 ---
 
-# 🧹 TASK 1 — Data Preparation & Text Preprocessing
+# 🧹 Task 1 — Text Loading, Cleaning, Tokenisation & Padding
 
 ## 🎯 Objective
 
-Prepare the raw IMDB reviews for neural-network training while avoiding data leakage.
+Prepare the raw IMDB text for deep-learning sequence models while avoiding data leakage.
 
-## 1.1 Load the Dataset
+## 1.1 Load and Inspect the Dataset
 
-The raw CSV is loaded using Pandas.
+The notebook loads the CSV with Pandas, checks its shape and columns, and prints raw review examples.
 
-```python
-df = pd.read_csv("IMDB Dataset.csv")
-```
+## 1.2 Remove Duplicate Reviews
 
-Duplicate rows are removed so that repeated reviews do not unnecessarily influence the model.
+Duplicate reviews are removed **before the train/test split**.
 
-## 1.2 Text Cleaning
+Why?
 
-A custom `clean_text()` function performs:
+If the same review appears in both training and test data, the model may already have seen the test example during training. This can produce artificially optimistic evaluation results.
 
-- Lowercase conversion
-- HTML-tag removal
-- Removal of unwanted characters
-- Preservation of apostrophes
-- Removal of repeated whitespace
+## 1.3 Text Cleaning
 
-Example pipeline:
+The notebook defines a reusable `clean_text()` function that:
+
+- converts text to lowercase;
+- removes HTML tags;
+- removes unwanted non-alphabetic characters;
+- preserves apostrophes;
+- normalizes repeated whitespace.
+
+Apostrophes are intentionally preserved because contractions such as:
 
 ```text
-Raw Review
-    ↓
-Lowercase
-    ↓
-Remove HTML
-    ↓
-Remove Unwanted Characters
-    ↓
-Normalize Spaces
-    ↓
-Clean Review
+don't
+isn't
+wasn't
+can't
 ```
 
-The purpose is to reduce irrelevant variation while retaining the text needed for sentiment learning.
+can carry important negation information.
 
-## 1.3 Review-Length Analysis
+Stop words are **not removed** because sequence models depend on word order and context. Words such as `not` may be crucial for sentiment.
 
-Review lengths are calculated before modeling.
+## 1.4 Review-Length Analysis
 
-Important statistics include:
-
-- Mean length
-- Median length
-- 90th percentile
-- 95th percentile
-
-The 95th percentile is used to help select `MAXLEN`.
+The notebook calculates review lengths and studies their distribution using a histogram and boxplot.
 
 <div align="center">
-<img src="plots/length_distribution.png" width="820">
+<img src="plots/length_distribution.png" width="820" alt="Review length distribution">
 </div>
 
-Using a percentile-based sequence length avoids choosing a length arbitrarily while limiting excessive padding.
+The notebook chooses:
 
-## 1.4 Label Encoding
+```text
+MAXLEN = 600
+```
+
+based approximately on the 95th percentile of review length and rounds it to a convenient value.
+
+This balances two needs:
+
+- retain most useful review content;
+- avoid excessive padding and unnecessary computation.
+
+## 1.5 Encode the Target
 
 ```text
 negative → 0
 positive → 1
 ```
 
-This converts the textual target into a binary target suitable for sigmoid classification.
+## 1.6 Split Before Fitting the Tokenizer
 
-## 1.5 Train/Test Split Before Tokenization
-
-The dataset is split **before fitting the tokenizer**.
-
-This is important because the vocabulary should be learned only from the training data.
+A key leakage-prevention step is:
 
 ```text
 Clean Reviews
-      ↓
+     ↓
 Train/Test Split
-      ↓
-Fit Tokenizer on Training Reviews Only
+     ↓
+Fit Tokenizer on Training Text Only
 ```
 
-This helps prevent **data leakage**.
+The tokenizer therefore learns its vocabulary only from training data.
 
-## 1.6 Tokenization
+## 1.7 Tokenisation
 
 The tokenizer uses:
 
@@ -229,206 +248,185 @@ VOCAB_SIZE = 10000
 oov_token = "<OOV>"
 ```
 
-The tokenizer maps words to integer IDs.
-
-Example:
+Text is converted into integer sequences:
 
 ```text
 "this movie is amazing"
-        ↓
-[15, 27, 8, 341]
+           ↓
+[integer, integer, integer, integer]
 ```
 
-The OOV token handles words that are not part of the learned vocabulary.
+The `<OOV>` token represents words outside the learned vocabulary.
 
-## 1.7 Padding
+## 1.8 Padding
 
-Every review must have the same sequence length before it can be passed to the neural network.
-
-The project uses:
+The notebook uses:
 
 ```python
 padding="pre"
 truncating="pre"
 ```
 
-Short sequences receive padding and overly long sequences are truncated.
+With pre-padding, zeros are added at the beginning of shorter sequences, keeping the most recent real tokens near the end of the sequence.
 
-### ✅ Task 1 Outcome
+## 1.9 Why Text Is Sequential
 
-At the end of Task 1, the raw text has been transformed into fixed-length integer sequences ready for embedding and neural-network training.
+Consider:
+
+```text
+"The movie was not good."
+"The movie was good, not bad."
+```
+
+The words are similar, but their **order and context change the meaning**. This is why sequence models are useful.
+
+### ✅ Task 1 Result
+
+The raw reviews are converted into fixed-length integer sequences suitable for neural-network training.
 
 ---
 
-# 🧠 TASK 2 — ANN Baseline & Manual RNN Forward Propagation
+# 🧠 Task 2 — ANN Baseline, RNN Intuition & Manual Forward Propagation
 
 ## 🎯 Objective
 
-Create a non-recurrent baseline and understand the mathematical forward pass of a SimpleRNN.
+Create a baseline classifier and understand the internal forward computation of a SimpleRNN.
 
 ## 2.1 ANN Baseline
 
 Architecture:
 
 ```text
-Input Sequence
-      ↓
-Embedding(10000, 32)
-      ↓
+Padded Review
+     ↓
+Embedding
+     ↓
 Flatten
-      ↓
+     ↓
 Dense(64, ReLU)
-      ↓
+     ↓
 Dense(1, Sigmoid)
-      ↓
+     ↓
 Positive / Negative
 ```
 
-The ANN baseline provides a reference point before recurrent architectures are introduced.
+The ANN provides a useful reference model before recurrent architectures are introduced.
 
-The embedding layer converts each integer word ID into a learned dense vector.
+### Final ANN Result
 
-## 2.2 Why Use a Baseline?
+| Metric | Result |
+|---|---:|
+| Test Accuracy | **86.62%** |
+| Precision | **86.63%** |
+| Recall | **86.72%** |
+| F1 | **86.68%** |
+| ROC-AUC | **0.9379** |
+| Total Parameters | **1,548,929** |
+| Time / Epoch | **12.60 s** |
 
-A baseline answers an important question:
+The ANN performs strongly, but the Flatten layer does not naturally reuse a recurrent transition across sequence positions.
 
-> Does recurrent sequence modeling actually improve the final sentiment-classification performance compared with a simpler architecture?
+## 2.2 RNN Intuition
 
-## 2.3 Manual SimpleRNN Forward Pass
+A SimpleRNN processes a sequence one time step at a time.
 
-A small RNN is implemented manually with NumPy.
-
-The recurrent equation is:
+Its hidden state is:
 
 \[
 h_t = \tanh(W_{xh}x_t + W_{hh}h_{t-1} + b)
 \]
 
-Where:
+where:
 
-- \(x_t\) = current input
-- \(h_{t-1}\) = previous hidden state
-- \(W_{xh}\) = input-to-hidden weights
-- \(W_{hh}\) = hidden-to-hidden recurrent weights
-- \(b\) = bias
-- \(h_t\) = new hidden state
+- \(x_t\): current input;
+- \(h_{t-1}\): previous hidden state;
+- \(W_{xh}\): input-to-hidden weights;
+- \(W_{hh}\): recurrent hidden-to-hidden weights;
+- \(b\): bias;
+- \(h_t\): new hidden state.
 
-The same recurrent weights are reused at every time step.
+## 2.3 Manual NumPy RNN
+
+The notebook manually implements a tiny RNN using NumPy with:
+
+```text
+Input Size     = 2
+Hidden Size    = 3
+Sequence Steps = 4
+```
+
+At each step:
+
+```text
+Current Input + Previous Hidden State
+                  ↓
+            Linear Transform
+                  ↓
+                 tanh
+                  ↓
+           New Hidden State
+```
 
 ## 2.4 Hidden-State Heatmap
 
 <div align="center">
-<img src="plots/rnn_forward_heatmap.png" width="800">
+<img src="plots/rnn_forward_heatmap.png" width="820" alt="Manual RNN hidden state heatmap">
 </div>
 
-The heatmap visualizes how the hidden-state values change as the sequence is processed.
+The heatmap visualizes how hidden-unit values evolve across the four time steps.
 
-## 2.5 Keras Verification
+## 2.5 Verify NumPy Against Keras
 
-The manually calculated hidden states are compared with:
+The notebook creates a Keras `SimpleRNN`, copies the manual NumPy weights into it, runs the same input sequence, and compares outputs.
 
-```python
-tf.keras.layers.SimpleRNN(
-    units=3,
-    return_sequences=True
-)
-```
+This verifies that the manual forward equations match Keras behaviour.
 
-The manually generated weights are assigned to the Keras layer and the outputs are checked using `np.allclose()`.
+## 2.6 Parameter Count
 
-This confirms that the manual mathematical implementation follows the same recurrent computation.
+For a `SimpleRNN(64)` receiving a 32-dimensional embedding:
 
-## 2.6 SimpleRNN Parameter Count
+\[
+Parameters = units \times (input\_dim + units + 1)
+\]
 
-For:
+\[
+64 \times (32 + 64 + 1)=6208
+\]
 
-```text
-Input dimension = 32
-Hidden units    = 64
-```
+### ✅ Task 2 Result
 
-the recurrent-layer parameter count is:
-
-```text
-units × (input_dim + units + 1)
-
-64 × (32 + 64 + 1)
-= 6,208
-```
-
-### ✅ Task 2 Outcome
-
-Task 2 establishes both a practical ANN baseline and a mathematical understanding of recurrent forward propagation.
+This task connects RNN mathematics with an actual Keras implementation and establishes the ANN baseline.
 
 ---
 
-# 🔁 TASK 3 — Types of RNN & SimpleRNN Sentiment Analysis
+# 🔁 Task 3 — Types of RNN & SimpleRNN Sentiment Analysis
 
 ## 🎯 Objective
 
-Understand the different input/output structures of recurrent networks and train a complete SimpleRNN sentiment classifier.
+Understand common sequence input/output patterns and build the first recurrent sentiment classifier.
 
-## 3.1 Types of RNN
+## 3.1 Four Sequence Mapping Types
 
-### One-to-One
+| Type | Meaning | Example |
+|---|---|---|
+| One-to-One | One input → one output | Image classification |
+| One-to-Many | One input → sequence | Caption generation |
+| Many-to-One | Sequence → one output | **Sentiment analysis** |
+| Many-to-Many | Sequence → sequence | Sequence labeling |
 
-```text
-Input → Output
-```
-
-Example: ordinary fixed-input classification.
-
-### One-to-Many
-
-```text
-Input → Output₁ → Output₂ → ... → Outputₜ
-```
-
-Example: generating a sequence from one input.
-
-### Many-to-One
+This project is **Many-to-One**:
 
 ```text
-Input₁
-Input₂
-Input₃ ───→ One Output
-...
-Inputₜ
+Review Token 1 ─┐
+Review Token 2  │
+Review Token 3  ├──→ Sentiment
+...             │
+Review Token N ─┘
 ```
 
-Example: **sentiment analysis**.
+## 3.2 Reusable Model Builder
 
-An entire review is processed and one final sentiment is predicted.
-
-### Many-to-Many
-
-```text
-Input Sequence → Output Sequence
-```
-
-Example: sequence labeling.
-
-## 3.2 Why This Project Is Many-to-One
-
-A review contains many tokens:
-
-```text
-"The movie was absolutely fantastic..."
-```
-
-but produces one label:
-
-```text
-Positive
-```
-
-Therefore, IMDB sentiment classification is a **many-to-one** sequence problem.
-
-## 3.3 Reusable Model Builder
-
-A reusable `build_model()` function is created so that the recurrent cell can be changed without changing the entire experimental setup.
-
-Supported cell types:
+The notebook creates one reusable `build_model()` function supporting:
 
 ```text
 rnn
@@ -436,264 +434,214 @@ lstm
 gru
 ```
 
-This makes comparisons more consistent.
+This keeps the experimental pipeline consistent when the recurrent cell changes.
 
-## 3.4 SimpleRNN Architecture
+## 3.3 SimpleRNN Architecture
 
 ```text
-Review
-   ↓
-Tokenizer
-   ↓
-Padding
-   ↓
-Embedding(10000, 32)
-   ↓
+Input
+  ↓
+Embedding(10,000, 32)
+  ↓
 SimpleRNN(64)
-   ↓
+  ↓
 Dense(1, Sigmoid)
-   ↓
+  ↓
 Sentiment
 ```
 
-## 3.5 Training Strategy
+## 3.4 Training
 
 The model uses:
 
-- Binary cross-entropy
-- Adam optimizer
-- Batch size 64
-- Validation split
-- Early stopping
-- Restoring best weights
+- Adam optimizer;
+- binary cross-entropy;
+- batch size 64;
+- validation split;
+- EarlyStopping;
+- best-weight restoration;
+- a custom callback for time per epoch.
 
-A custom callback also records training time per epoch.
+## 3.5 Training Curves
+
+<div align="center">
+<img src="plots/training_curves_simplernn.png" width="850" alt="SimpleRNN training curves">
+</div>
 
 ## 3.6 Evaluation
 
-The model is evaluated using:
+<div align="center">
+<img src="plots/confusion_matrix_simplernn.png" width="620" alt="SimpleRNN confusion matrix">
+</div>
 
-- Accuracy
-- Precision
-- Recall
-- F1 Score
-- ROC-AUC
-- Confusion matrix
+### Final SimpleRNN Result
 
-## 3.7 Embedding Inspection
+| Metric | Result |
+|---|---:|
+| Test Accuracy | **79.01%** |
+| Precision | **88.69%** |
+| Recall | **66.67%** |
+| F1 | **76.12%** |
+| ROC-AUC | **0.8787** |
+| Total Parameters | **326,273** |
+| Epochs | **4** |
 
-The learned embedding matrix has the form:
+The model has relatively high precision but much lower recall, meaning it misses a substantial number of actual positive reviews.
 
-```text
-(vocabulary size, embedding dimension)
-```
+## 3.7 Learned Embeddings
 
-For this project:
+The notebook inspects the learned embedding matrix and retrieves vectors for words such as `good` and `bad`.
 
-```text
-(10000, 32)
-```
+### ✅ Task 3 Result
 
-Word vectors such as `good` and `bad` can be extracted from the embedding matrix and inspected.
-
-### ✅ Task 3 Outcome
-
-A complete SimpleRNN sentiment-classification pipeline is built and evaluated, providing the recurrent baseline for comparison with LSTM and GRU.
+The project now has a complete recurrent baseline for later comparison with gated architectures.
 
 ---
 
-# 📉 TASK 4 — BPTT, Vanishing & Exploding Gradients
+# 📉 Task 4 — BPTT, Vanishing Gradients & Exploding Gradients
 
 ## 🎯 Objective
 
-Understand how an RNN learns through time and why long sequences are challenging for a basic recurrent network.
+Understand how recurrent networks learn through time and why basic RNNs can struggle with long sequences.
 
 ## 4.1 Backpropagation Through Time
 
-An RNN can be conceptually unrolled:
+An RNN can be visualized as:
 
 ```text
 x₁ → h₁ → h₂ → h₃ → ... → hₜ → Prediction
 ```
 
-During forward propagation, information moves from earlier to later time steps.
+During BPTT, the loss gradient travels backward through these recurrent steps.
 
-During **Backpropagation Through Time**, gradients move backward through the unrolled recurrent computation.
-
-```text
-Loss ← hₜ ← hₜ₋₁ ← ... ← h₂ ← h₁
-```
-
-The gradient reaching an early hidden state involves repeated Jacobian multiplication.
-
-For tanh:
-
-\[
-\frac{d}{dx}\tanh(x)=1-\tanh^2(x)
-\]
-
-Repeated multiplication is the source of the two important RNN gradient problems.
+Repeated multiplication of recurrent transformations and activation derivatives can cause gradient magnitude to shrink or grow dramatically.
 
 ## 4.2 Vanishing Gradient
 
-If repeated gradient factors have magnitudes below 1:
+When repeated gradient factors are small:
 
 ```text
-0.5 × 0.5 × 0.5 × ...
+0.5 × 0.5 × 0.5 × 0.5 × ...
 ```
 
-the gradient can become extremely small.
+the gradient can approach zero.
 
-### Effect
-
-Earlier sequence information becomes difficult to learn.
-
-### Practical Meaning
-
-The model may struggle when important sentiment information appears far from the final time step.
-
-### Main Remedy Studied
-
-```text
-LSTM / GRU
-```
+**Effect:** information from early time steps becomes difficult to learn.
 
 ## 4.3 Exploding Gradient
 
-If repeated factors have magnitudes above 1, gradients can grow rapidly.
+When repeated factors are large, gradients may grow excessively.
 
 Possible symptoms:
 
-- Unstable training
-- Large loss spikes
-- Huge parameter updates
-- NaN values
+- unstable loss;
+- huge updates;
+- numerical instability;
+- NaN values.
 
-## 4.4 Gradient Norm Experiment
+## 4.4 Gradient-Norm Experiment
 
-`GradientTape` is used to inspect gradient behaviour across time steps.
+The notebook uses TensorFlow `GradientTape` to inspect gradient norms.
 
 <div align="center">
-<img src="plots/gradient_norms_all_cells.png" width="850">
+<img src="plots/gradient_norm_simplernn.png" width="850" alt="SimpleRNN gradient norms">
 </div>
 
-The experiment is used as a practical visualization of recurrent gradient behaviour.
+The notebook's direct hidden-output gradient experiment reports zero values at many earlier positions and a non-zero gradient at the final position. This result should be interpreted according to the exact computation used in the notebook rather than treated as a universal gradient-decay curve.
 
 ## 4.5 Sequence-Length Experiment
 
-SimpleRNN is trained using:
+SimpleRNN is tested with:
 
 ```text
-MAXLEN = 50
-MAXLEN = 100
-MAXLEN = 200
-MAXLEN = 300
+50
+100
+200
+300
 ```
 
-The purpose is to study whether increasing sequence length always improves classification.
+time steps.
 
-Longer sequences contain more information, but they also make recurrent optimization more difficult and may introduce more noise.
+<div align="center">
+<img src="plots/accuracy_vs_sequence_length_rnn.png" width="820" alt="SimpleRNN sequence length experiment">
+</div>
+
+This experiment studies the trade-off between retaining more review context and making recurrent optimization more difficult.
 
 ## 4.6 Gradient Clipping
 
-An intentionally high learning rate is used to investigate unstable training.
-
-The experiment compares:
+The notebook compares a high-learning-rate RNN:
 
 ```text
-Without clipping
-vs
-clipnorm = 1.0
+Without Gradient Clipping
+            vs
+Adam(..., clipnorm=1.0)
 ```
 
-Gradient clipping limits excessively large gradient norms.
+<div align="center">
+<img src="plots/gradient_clipping_comparison.png" width="820" alt="Gradient clipping comparison">
+</div>
 
-### Important
+Gradient clipping is mainly used to control **exploding gradients**.
 
-Gradient clipping is primarily a remedy for **exploding gradients**.
+### ✅ Task 4 Result
 
-It does not fix gradients that have already vanished.
-
-## 4.7 Problems Summary
-
-| Problem | Cause | Possible Symptom | Remedy |
-|---|---|---|---|
-| Vanishing gradient | Repeated small derivative factors | Weak learning of distant information | LSTM / GRU |
-| Exploding gradient | Repeated large gradient factors | Unstable loss / huge updates | Gradient clipping |
-| Short-term memory | Basic recurrent transition | Difficulty with long dependencies | Gated recurrence |
-| Sequential computation | Current state depends on previous state | Training can be slower | Efficient hardware / architecture choices |
-
-### ✅ Task 4 Outcome
-
-Task 4 explains why a basic RNN may struggle with long-term dependencies and motivates the introduction of gated recurrent architectures.
+This task explains the motivation for LSTM and GRU: basic recurrence can struggle to carry useful learning signals across long sequences.
 
 ---
 
-# 🧠 TASK 5 — Long Short-Term Memory (LSTM)
+# 🧠 Task 5 — Long Short-Term Memory (LSTM)
 
 ## 🎯 Objective
 
-Understand LSTM gates and cell state, implement the LSTM equations manually, and compare LSTM with SimpleRNN.
+Understand LSTM memory gates, implement the cell manually, and evaluate single and stacked LSTM models.
 
-## 5.1 LSTM Components
+## 5.1 LSTM Gates
 
-LSTM maintains:
+LSTM maintains both:
 
 ```text
-Hidden State → hₜ
-Cell State   → Cₜ
+Hidden State hₜ
+Cell State   Cₜ
 ```
 
-Its main components are:
-
-- Forget gate
-- Input gate
-- Candidate state
-- Cell-state update
-- Output gate
-- Hidden state
-
-## Forget Gate
+### Forget Gate
 
 \[
-f_t=\sigma(W_f[h_{t-1},x_t]+b_f)
+f_t = \sigma(W_f[h_{t-1},x_t]+b_f)
 \]
 
-Controls how much previous memory is retained.
+Controls what previous memory should be retained.
 
-## Input Gate
+### Input Gate
 
 \[
-i_t=\sigma(W_i[h_{t-1},x_t]+b_i)
+i_t = \sigma(W_i[h_{t-1},x_t]+b_i)
 \]
 
-Controls how much new information is written.
+Controls how much new information should be written.
 
-## Candidate State
+### Candidate State
 
 \[
-g_t=\tanh(W_g[h_{t-1},x_t]+b_g)
+g_t = \tanh(W_g[h_{t-1},x_t]+b_g)
 \]
 
 Creates candidate information.
 
-## Cell-State Update
+### Cell-State Update
 
 \[
 C_t=f_tC_{t-1}+i_tg_t
 \]
 
-Combines retained memory with new information.
-
-## Output Gate
+### Output Gate
 
 \[
 o_t=\sigma(W_o[h_{t-1},x_t]+b_o)
 \]
 
-Controls how much memory is exposed.
-
-## Hidden State
+### Hidden State
 
 \[
 h_t=o_t\tanh(C_t)
@@ -701,43 +649,31 @@ h_t=o_t\tanh(C_t)
 
 ## 5.2 Why LSTM Helps
 
-The cell state provides a more direct additive memory path.
+The additive cell-state path provides a more direct route for memory.
 
-When the forget gate is near one:
+When the forget gate is close to one, previous cell-state information can be retained across more time steps.
+
+## 5.3 LSTM Recurrent Parameter Count
+
+For 64 units and 32 input features:
 
 \[
-C_t \approx C_{t-1}
+4 \times 64 \times (32+64+1)=24,832
 \]
 
-information can be preserved for longer periods.
-
-This makes LSTM better suited than SimpleRNN for learning long-range dependencies.
-
-## 5.3 LSTM Parameter Count
-
-For 64 hidden units and input dimension 32:
-
-```text
-4 × units × (input_dim + units + 1)
-
-4 × 64 × (32 + 64 + 1)
-
-= 24,832 recurrent parameters
-```
-
-The factor of four comes from the four major transformations used by the LSTM.
+The four comes from the forget, input, candidate, and output transformations.
 
 ## 5.4 Manual LSTM
 
-A small LSTM is implemented manually using NumPy with:
+The notebook manually implements an LSTM using NumPy with:
 
 ```text
-Input size  = 2
-Hidden size = 3
-Time steps  = 4
+Input Size  = 2
+Hidden Size = 3
+Time Steps  = 4
 ```
 
-At every step the implementation calculates:
+At every time step it calculates:
 
 ```text
 Forget Gate
@@ -748,25 +684,41 @@ Output Gate
 Hidden State
 ```
 
-This demonstrates how memory is explicitly controlled.
-
-## 5.5 LSTM Sentiment Model
+## 5.5 Train LSTM
 
 ```text
-Embedding(10000, 32)
-        ↓
-LSTM(64)
-        ↓
-Dense(1, Sigmoid)
+Embedding(10,000, 32)
+          ↓
+       LSTM(64)
+          ↓
+ Dense(1, Sigmoid)
 ```
 
-The same training setup used for SimpleRNN is retained to make the comparison fair.
+<div align="center">
+<img src="plots/training_curves_lstm.png" width="850" alt="LSTM training curves">
+</div>
 
-## 5.6 SimpleRNN vs LSTM Gradient Flow
+<div align="center">
+<img src="plots/confusion_matrix_lstm.png" width="620" alt="LSTM confusion matrix">
+</div>
 
-The gradient experiment is repeated with LSTM and compared with SimpleRNN.
+### Final LSTM Result
 
-The goal is to investigate how gating and memory affect information and gradient flow.
+| Metric | Result |
+|---|---:|
+| Test Accuracy | **88.68%** |
+| Precision | **87.13%** |
+| Recall | **90.86%** |
+| F1 | **88.95%** |
+| ROC-AUC | **0.9497** |
+| Total Parameters | **344,897** |
+| Epochs | **7** |
+
+## 5.6 RNN vs LSTM Gradient Experiment
+
+<div align="center">
+<img src="plots/gradient_norm_rnn_vs_lstm.png" width="850" alt="RNN vs LSTM gradient comparison">
+</div>
 
 ## 5.7 Stacked LSTM
 
@@ -774,69 +726,69 @@ Architecture:
 
 ```text
 Embedding
-    ↓
+   ↓
 LSTM(64, return_sequences=True)
-    ↓
+   ↓
 LSTM(32)
-    ↓
+   ↓
 Dense(1, Sigmoid)
 ```
 
-The first LSTM requires:
+The first LSTM uses `return_sequences=True` because the second recurrent layer requires the full sequence of hidden outputs.
 
-```python
-return_sequences=True
-```
+### Final Stacked LSTM Result
 
-because the second LSTM needs an entire sequence of hidden states rather than only one final vector.
+| Metric | Result |
+|---|---:|
+| Test Accuracy | **88.31%** |
+| Precision | **88.58%** |
+| Recall | **88.07%** |
+| F1 | **88.32%** |
+| ROC-AUC | **0.9499** |
+| Total Parameters | **357,281** |
+| Epochs | **6** |
 
-### ✅ Task 5 Outcome
+The deeper model did not outperform the single LSTM or GRU in this notebook.
 
-Task 5 demonstrates how LSTM introduces explicit memory control and provides a gated alternative to SimpleRNN.
+### ✅ Task 5 Result
+
+LSTM substantially improves the final metrics over SimpleRNN and demonstrates explicit gated memory.
 
 ---
 
-# 🚀 TASK 6 — Gated Recurrent Unit (GRU)
+# 🚀 Task 6 — Gated Recurrent Unit (GRU)
 
 ## 🎯 Objective
 
-Understand GRU gates, compare GRU with LSTM, train a GRU sentiment classifier and analyze model capacity.
+Study the simpler gated GRU architecture and compare it with LSTM.
 
-## 6.1 GRU Architecture
+## 6.1 GRU Gates
 
-GRU uses two primary gates:
+GRU uses two primary gates.
 
-```text
-Update Gate
-Reset Gate
-```
-
-and does not maintain a separate LSTM-style cell state.
-
-## Update Gate
+### Update Gate
 
 \[
 z_t=\sigma(W_z[h_{t-1},x_t]+b_z)
 \]
 
-Controls the balance between old information and new candidate information.
+Controls the balance between old and new information.
 
-## Reset Gate
+### Reset Gate
 
 \[
 r_t=\sigma(W_r[h_{t-1},x_t]+b_r)
 \]
 
-Controls how much previous hidden information contributes to the candidate state.
+Controls how much previous hidden information is used to construct the candidate.
 
-## Candidate Hidden State
+### Candidate Hidden State
 
 \[
-\tilde{h}_t=
-\tanh(W_h[r_t*h_{t-1},x_t]+b_h)
+\tilde{h}_t=\tanh(W_h[r_t*h_{t-1},x_t]+b_h)
 \]
 
-## Final Hidden State
+### Final Hidden State
 
 \[
 h_t=(1-z_t)h_{t-1}+z_t\tilde{h}_t
@@ -847,63 +799,60 @@ h_t=(1-z_t)h_{t-1}+z_t\tilde{h}_t
 | Feature | LSTM | GRU |
 |---|---|---|
 | Main gates | Forget, Input, Output | Update, Reset |
-| Cell state | Separate cell state | No separate cell state |
+| Separate cell state | Yes | No |
 | Architecture | More complex | Simpler |
-| Recurrent parameters | More | Fewer |
-| Memory mechanism | Cell + hidden state | Hidden state |
-| Training cost | Often higher | Often lower |
+| Recurrent parameters in this setup | 24,832 | 18,816 |
+| Memory | Cell + hidden state | Hidden state |
 
-Neither architecture is guaranteed to win on every dataset; the final decision should be based on experimental results.
-
-## 6.3 GRU Parameter Count
+## 6.3 GRU Recurrent Parameter Count
 
 With Keras `reset_after=True`:
 
-```text
-3 × (units × input_dim + units² + 2 × units)
+\[
+3 \times (64\times32 + 64\times64 + 2\times64)=18,816
+\]
 
-3 × (64×32 + 64×64 + 2×64)
-
-= 18,816 recurrent parameters
-```
-
-Therefore:
+## 6.4 Train GRU
 
 ```text
-SimpleRNN recurrent parameters = 6,208
-GRU recurrent parameters       = 18,816
-LSTM recurrent parameters      = 24,832
-```
-
-## 6.4 GRU Sentiment Model
-
-```text
-Embedding(10000, 32)
-        ↓
-GRU(64)
-        ↓
-Dense(1, Sigmoid)
-```
-
-GRU is trained using the same core experimental settings as the other recurrent models.
-
-## 6.5 Gradient Comparison
-
-The final gradient plot compares:
-
-```text
-SimpleRNN
-LSTM
-GRU
+Embedding(10,000, 32)
+          ↓
+        GRU(64)
+          ↓
+ Dense(1, Sigmoid)
 ```
 
 <div align="center">
-<img src="plots/gradient_norms_all_cells.png" width="850">
+<img src="plots/training_curves_gru.png" width="850" alt="GRU training curves">
 </div>
+
+<div align="center">
+<img src="plots/confusion_matrix_gru.png" width="620" alt="GRU confusion matrix">
+</div>
+
+### Final GRU Result 🏆
+
+| Metric | Result |
+|---|---:|
+| Test Accuracy | **89.73%** |
+| Precision | **89.69%** |
+| Recall | **89.87%** |
+| F1 | **89.78%** |
+| ROC-AUC | **0.9595** |
+| Total Parameters | **338,881** |
+| Epochs | **6** |
+
+## 6.5 RNN vs LSTM vs GRU Gradient Experiment
+
+<div align="center">
+<img src="plots/gradient_norms_all_cells.png" width="880" alt="Gradient comparison">
+</div>
+
+The recorded table in the notebook shows zero direct hidden-output gradient at the first and middle inspected positions for all three architectures, with non-zero values at the final position. This reflects the exact GradientTape experiment used in the notebook.
 
 ## 6.6 Hidden-Unit Sensitivity
 
-Both LSTM and GRU are trained using:
+LSTM and GRU are retrained using:
 
 ```text
 32 units
@@ -911,435 +860,329 @@ Both LSTM and GRU are trained using:
 128 units
 ```
 
-The experiment compares:
+### Experiment Results
 
-- Test accuracy
-- Parameter count
+| Cell | Units | Parameters | Test Accuracy |
+|---|---:|---:|---:|
+| LSTM | 32 | 328,353 | 86.86% |
+| LSTM | 64 | 344,897 | 87.35% |
+| LSTM | 128 | 402,561 | 86.28% |
+| GRU | 32 | 326,369 | 88.13% |
+| GRU | 64 | 338,881 | 87.56% |
+| **GRU** | **128** | **382,337** | **88.85%** |
 
-This demonstrates an important deep-learning principle:
+<div align="center">
+<img src="plots/accuracy_vs_hidden_units.png" width="820" alt="Accuracy vs hidden units">
+</div>
 
-> A larger model is not automatically a better model.
+<div align="center">
+<img src="plots/parameters_vs_hidden_units.png" width="820" alt="Parameters vs hidden units">
+</div>
 
-Increasing hidden units increases capacity, but also increases memory usage, training cost and overfitting risk.
+The best configuration **inside this fixed six-model sensitivity experiment** is GRU with 128 units at **88.85%** test accuracy.
 
-### ✅ Task 6 Outcome
+This is separate from the main EarlyStopping model comparison, where the final GRU(64) model achieved **89.73%**.
 
-Task 6 introduces a simpler gated recurrent architecture and experimentally compares model capacity and performance.
+### ✅ Task 6 Result
+
+GRU provides the strongest final recurrent result in the notebook while remaining smaller than the corresponding LSTM model.
 
 ---
 
-# 🏆 TASK 7 — Final Comparison, Analysis & Inference
+# 🏆 Task 7 — Final Comparison, Analysis & Inference
 
 ## 🎯 Objective
 
-Bring together every trained model and determine which architecture provides the strongest final result.
-
-Task 7 performs:
-
-1. Final model comparison
-2. Combined ROC analysis
-3. Review-length analysis
-4. Misclassification analysis
-5. Custom inference
-6. Production recommendation
+Compare every trained model and investigate performance beyond a single accuracy value.
 
 ---
 
-# 7.1 📊 Complete Final Model Comparison
-
-The final output from this project is:
+## 7.1 Final Model Comparison
 
 | Model | Parameters | Time / Epoch | Epochs | Accuracy | Precision | Recall | F1 | ROC-AUC |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| **ANN Baseline** | 1,548,929 | 12.60 s | 5 | 86.62% | 86.63% | 86.72% | 86.68% | 0.9379 |
-| **SimpleRNN** | 326,273 | 68.88 s | 4 | 79.01% | 88.69% | 66.67% | 76.12% | 0.8787 |
-| **LSTM** | 344,897 | 179.99 s | 7 | 88.68% | 87.13% | 90.86% | 88.95% | 0.9497 |
-| **Stacked LSTM** | 357,281 | 1358.36 s | 6 | 88.31% | 88.58% | 88.07% | 88.32% | 0.9499 |
-| **GRU 🏆** | 338,881 | 174.53 s | 6 | 89.73% | 89.69% | 89.87% | 89.78% | 0.9595 |
+| ANN Baseline | 1,548,929 | 12.60 s | 5 | 86.62% | 86.63% | 86.72% | 86.68% | 0.9379 |
+| SimpleRNN | 326,273 | 68.88 s | 4 | 79.01% | 88.69% | 66.67% | 76.12% | 0.8787 |
+| LSTM | 344,897 | 179.99 s | 7 | 88.68% | 87.13% | **90.86%** | 88.95% | 0.9497 |
+| Stacked LSTM | 357,281 | 1358.36 s | 6 | 88.31% | 88.58% | 88.07% | 88.32% | 0.9499 |
+| **GRU 🏆** | **338,881** | **174.53 s** | **6** | **89.73%** | **89.69%** | 89.87% | **89.78%** | **0.9595** |
 
 <div align="center">
-<img src="plots/results_table.png" width="950">
+<img src="plots/results_table.png" width="980" alt="Final results table">
 </div>
 
-## 🔎 Result Interpretation
+### Key Observations
 
-### ANN Baseline
-
-- Accuracy: **86.62%**
-- F1: **86.68%**
-- ROC-AUC: **0.9379**
-- Parameters: **1,548,929**
-- Time/Epoch: **12.60 s**
-
-The ANN baseline produced strong performance and was the fastest model in the recorded final table. However, flattening the sequence resulted in a very large parameter count.
-
-### SimpleRNN
-
-- Accuracy: **79.01%**
-- Precision: **88.69%**
-- Recall: **66.67%**
-- F1: **76.12%**
-- ROC-AUC: **0.8787**
-
-SimpleRNN had the weakest final accuracy and F1 among the five submitted models. Its precision remained comparatively strong, while its lower recall indicates that more actual positive reviews were missed.
-
-### LSTM
-
-- Accuracy: **88.68%**
-- F1: **88.95%**
-- ROC-AUC: **0.9497**
-
-LSTM substantially improved the final metrics over SimpleRNN in this experiment.
-
-### Stacked LSTM
-
-- Accuracy: **88.31%**
-- F1: **88.32%**
-- ROC-AUC: **0.9499**
-- Time/Epoch: **1358.36 s**
-
-Adding another recurrent layer increased model complexity and recorded training time, but it did not produce the best final test performance.
-
-### GRU 🏆
-
-- Accuracy: **89.73%**
-- Precision: **89.69%**
-- Recall: **89.87%**
-- F1: **89.78%**
-- ROC-AUC: **0.9595**
-- Parameters: **338,881**
-
-GRU achieved the strongest overall final result in the supplied comparison table.
+- **GRU has the highest test accuracy.**
+- **GRU has the highest F1 score.**
+- **GRU has the highest ROC-AUC.**
+- **LSTM has the highest recall.**
+- **ANN has the fastest recorded time per epoch.**
+- **SimpleRNN has the weakest accuracy and recall in the final comparison.**
+- **Stacked LSTM adds complexity without beating the single LSTM or GRU here.**
 
 ---
 
-# 7.2 📈 Combined ROC Curve
-
-The ROC curve evaluates model discrimination across different classification thresholds.
+## 7.2 Combined ROC Analysis
 
 <div align="center">
-<img src="plots/roc_curves.png" width="850">
+<img src="plots/roc_curves.png" width="850" alt="ROC curves">
 </div>
 
-### ROC-AUC Interpretation
-
-```text
-ROC-AUC = 1.0  → Excellent discrimination
-ROC-AUC = 0.5  → Random-like discrimination
-```
-
-Final ROC-AUC values:
+ROC-AUC measures how well the model separates positive and negative classes across thresholds.
 
 | Model | ROC-AUC |
 |---|---:|
-| ANN Baseline | 0.9379 |
+| ANN | 0.9379 |
 | SimpleRNN | 0.8787 |
 | LSTM | 0.9497 |
 | Stacked LSTM | 0.9499 |
 | **GRU** | **0.9595** |
 
-GRU achieved the highest ROC-AUC in the supplied final results.
+The final GRU has the strongest discrimination in this experiment.
 
 ---
 
-# 7.3 📐 Performance by Review Length
+## 7.3 Accuracy by Review Length
 
-Test reviews are divided into:
+The notebook divides test reviews into:
 
 ```text
-Short  → fewer than 100 words
-Medium → 100–250 words
-Long   → more than 250 words
+Short  : < 100 words
+Medium : 100–250 words
+Long   : > 250 words
 ```
 
-The best gated model is compared with SimpleRNN.
+It compares SimpleRNN with the best gated model, **GRU**.
+
+| Review Length | SimpleRNN | GRU |
+|---|---:|---:|
+| Short (<100) | 78.83% | **90.17%** |
+| Medium (100–250) | 80.20% | **89.98%** |
+| Long (>250) | 76.67% | **89.05%** |
 
 <div align="center">
-<img src="plots/accuracy_by_length.png" width="850">
+<img src="plots/accuracy_by_length.png" width="850" alt="Accuracy by review length">
 </div>
 
-### Why Perform This Analysis?
+### Interpretation
 
-Overall accuracy alone does not show whether a model behaves differently on short and long text.
+GRU outperforms SimpleRNN in **all three review-length groups**.
 
-A short review may contain only a few strong sentiment words:
+The largest practical benefit is visible for long reviews, where SimpleRNN falls to about **76.67%**, while GRU remains around **89.05%**.
 
-```text
-"Amazing movie!"
-```
-
-A long review may contain:
-
-- Multiple opinions
-- Negation
-- Context changes
-- Mixed sentiment
-- Important information separated by many words
-
-This analysis therefore helps evaluate whether gated recurrence provides an advantage when more temporal context must be processed.
-
-> The exact short/medium/long group accuracies should be read from the generated notebook output/plot because they are not contained in the supplied final model-comparison CSV.
+This supports the usefulness of gated recurrence for this dataset, especially when more context must be processed.
 
 ---
 
-# 7.4 ❌ Misclassification Analysis
+## 7.4 Misclassification Analysis
 
-The best gated model is used to inspect **8 incorrect predictions**:
+The notebook uses GRU for error analysis.
+
+It finds:
+
+```text
+False Positives : 514
+False Negatives : 504
+```
+
+Eight examples are selected:
 
 ```text
 4 False Positives
 4 False Negatives
 ```
 
-## False Positive
+### False Positive
 
 ```text
-True sentiment      = Negative
-Predicted sentiment = Positive
+True Label      : Negative
+Predicted Label : Positive
 ```
 
-The model incorrectly believes a negative review is positive.
-
-## False Negative
+### False Negative
 
 ```text
-True sentiment      = Positive
-Predicted sentiment = Negative
+True Label      : Positive
+Predicted Label : Negative
 ```
 
-The model incorrectly believes a positive review is negative.
+The notebook displays for each example:
 
-For every selected error, the notebook displays:
+- error type;
+- true label;
+- predicted label;
+- positive-class probability;
+- cleaned review text.
 
-- Error type
-- True label
-- Predicted label
-- Positive-class probability
-- Cleaned review text
+The selected probabilities include:
 
-### Why Can Sentiment Models Fail?
+| Error | Positive Probability |
+|---|---:|
+| False Positive 1 | 0.6195 |
+| False Positive 2 | 0.7703 |
+| False Positive 3 | 0.7146 |
+| False Positive 4 | 0.6687 |
+| False Negative 1 | 0.3560 |
+| False Negative 2 | 0.1355 |
+| False Negative 3 | 0.0753 |
+| False Negative 4 | 0.4830 |
 
-#### 1. Negation
-
-```text
-"This movie is not good."
-```
-
-The word `good` is positive, but `not` reverses the meaning.
-
-#### 2. Mixed Sentiment
-
-```text
-"The acting was excellent but the story was terrible."
-```
-
-The same review contains both positive and negative evidence.
-
-#### 3. Sarcasm
-
-```text
-"What a masterpiece — I loved wasting two hours."
-```
-
-The literal wording can differ from the intended sentiment.
-
-#### 4. Long-Range Context
-
-An early sentence may change how later words should be interpreted.
-
-#### 5. OOV / Rare Words
-
-Unknown vocabulary may be mapped to `<OOV>`, reducing available semantic information.
-
-#### 6. Ambiguous Language
-
-Human reviewers themselves may disagree about some borderline examples.
-
-### Why Error Analysis Matters
-
-A model with high accuracy can still fail systematically on particular language patterns. Looking at actual mistakes gives a more realistic understanding of model quality.
+Possible difficulties visible in natural review text include mixed opinions, negation, long context, ambiguous phrasing and sentiment shifts.
 
 ---
 
-# 7.5 🔮 Custom Sentiment Prediction
+## 7.5 Reusable `predict_sentiment()` Function
 
-A reusable function is created:
+The notebook creates a user-friendly inference function.
 
 ```python
 predict_sentiment(text)
 ```
 
-The function performs the exact preprocessing pipeline required by the trained model:
+Pipeline:
 
 ```text
-New Text
-   ↓
+New Review
+    ↓
 clean_text()
-   ↓
-Tokenizer
-   ↓
+    ↓
+Training Tokenizer
+    ↓
 Integer Sequence
-   ↓
-Padding to MAXLEN
-   ↓
-Best Model
-   ↓
+    ↓
+Pre-Padding to MAXLEN = 600
+    ↓
+GRU Prediction
+    ↓
 Positive Probability
-   ↓
-Threshold = 0.5
-   ↓
+    ↓
+Threshold 0.5
+    ↓
 Positive / Negative
 ```
 
-Example:
+Example notebook test:
 
 ```python
-result = predict_sentiment(
-    "This movie was absolutely wonderful."
+predict_sentiment(
+    "This movie was absolutely wonderful and I loved it."
 )
-
-print(result)
 ```
 
-Output structure:
+Notebook output:
 
 ```python
 {
-    "label": "Positive",
-    "positive_probability": 0.XX
+    'label': 'Positive',
+    'positive_probability': 0.9850381016731262
 }
 ```
 
-The numerical probability depends on the trained model and input.
+---
+
+## 7.6 Six Custom Language Tests
+
+The notebook evaluates six user-style sentences.
+
+| Type | Prediction | Positive Probability |
+|---|---|---:|
+| Clearly Positive | Positive | **0.9787** |
+| Clearly Negative | Negative | **0.0053** |
+| Negation | Negative | **0.1630** |
+| Double Negation | Negative | **0.2545** |
+| Sarcastic | Negative | **0.4140** |
+| Very Short | Positive | **0.9589** |
+
+### What Do These Tests Show?
+
+**Clearly Positive:** correctly produces a high positive probability.
+
+**Clearly Negative:** correctly produces a very low positive probability.
+
+**Negation:** the model correctly predicts Negative for `"The movie was not good..."`.
+
+**Double Negation:** the model predicts Negative. This example demonstrates that more complex linguistic constructions can remain challenging.
+
+**Sarcasm:** the model predicts Negative with probability below 0.5, showing useful behaviour on this specific sarcastic example.
+
+**Very Short:** `"Amazing movie."` is predicted Positive with high confidence.
+
+These custom tests are useful because ordinary test accuracy does not fully describe how a model handles difficult language patterns.
 
 ---
 
-# 7.6 🧪 Six Custom Language Tests
+## 7.7 Production Recommendation
 
-The final model is tested on six different cases.
+The notebook compares LSTM and GRU as final gated candidates:
 
-### 😊 1. Clearly Positive
+| Metric | LSTM | GRU |
+|---|---:|---:|
+| Accuracy | 88.68% | **89.73%** |
+| Precision | 87.13% | **89.69%** |
+| Recall | **90.86%** | 89.87% |
+| F1 | 88.95% | **89.78%** |
+| ROC-AUC | 0.9497 | **0.9595** |
+| Parameters | 344,897 | **338,881** |
+| Time / Epoch | 179.99 s | **174.53 s** |
 
-```text
-This movie was absolutely fantastic.
-The acting was brilliant and I loved every moment.
-```
+### 🏆 Recommended Model: GRU
 
-Purpose: test straightforward positive sentiment.
-
-### 😡 2. Clearly Negative
-
-```text
-This movie was terrible, boring and a complete waste of time.
-```
-
-Purpose: test straightforward negative sentiment.
-
-### 🚫 3. Negation
+GRU is selected because it provides the strongest overall balance in this notebook:
 
 ```text
-The movie was not good and I would not recommend it.
+Accuracy   : 89.73%
+Precision  : 89.69%
+Recall     : 89.87%
+F1         : 89.78%
+ROC-AUC    : 0.9595
+Parameters : 338,881
+Time/Epoch : 174.53 s
 ```
 
-Purpose: determine whether the model can interpret negation.
-
-### 🔄 4. Double Negation
-
-```text
-I cannot say that this movie was not enjoyable.
-```
-
-Purpose: test more complex linguistic structure.
-
-### 😏 5. Sarcasm
-
-```text
-What a masterpiece, I especially loved wasting two hours of my life.
-```
-
-Purpose: test the difference between literal positive wording and negative intended meaning.
-
-### ⚡ 6. Very Short Review
-
-```text
-Amazing movie.
-```
-
-Purpose: determine whether the model can classify sentiment with very little context.
-
-These examples demonstrate that real-world language understanding requires more than simply recognizing positive and negative keywords.
+LSTM has slightly higher recall, but GRU wins on accuracy, precision, F1, ROC-AUC, parameter count, and recorded time per epoch.
 
 ---
 
-# 7.7 🏭 Production Recommendation
-
-The final model should not be selected using accuracy alone.
-
-The comparison considers:
-
-```text
-Accuracy
-Precision
-Recall
-F1 Score
-ROC-AUC
-Parameter Count
-Training Time
-Gradient Behaviour
-Review-Length Behaviour
-Error Analysis
-Custom Predictions
-```
-
-## 🏆 Final Best Model — GRU
-
-Based on the supplied final comparison results:
-
-| Metric | GRU Result |
-|---|---:|
-| **Accuracy** | **89.73%** |
-| **Precision** | **89.69%** |
-| **Recall** | **89.87%** |
-| **F1** | **89.78%** |
-| **ROC-AUC** | **0.9595** |
-| **Parameters** | **338,881** |
-| **Time / Epoch** | **174.53 s** |
-
-GRU achieved the highest **test accuracy, F1 score, and ROC-AUC** in the supplied final results.
-
-It also used fewer parameters than the LSTM and Stacked LSTM models in the final model table.
-
-Therefore, **GRU is the preferred recurrent architecture for this experiment**.
-
----
-
-# 📊 Training-Curve Comparison
+# 📊 Combined Training Curves
 
 <div align="center">
-<img src="plots/training_curves_rnn_lstm_gru.png" width="850">
+<img src="plots/training_curves_rnn_lstm_gru.png" width="880" alt="Combined recurrent model training curves">
 </div>
 
-The validation curves allow comparison of how SimpleRNN, LSTM and GRU learn across epochs and help identify signs such as convergence or overfitting.
+This plot provides a single view of the recurrent models' validation-loss behaviour.
 
 ---
 
-# 📋 Final Results at a Glance
+# 🖼️ Complete Plot Gallery
 
-<div align="center">
+All graphs generated by the notebook can be stored in the **`plots/`** folder.
 
-| 🏅 Category | Winner |
+| Plot | Purpose |
 |---|---|
-| Best Test Accuracy | **GRU — 89.73%** |
-| Best F1 Score | **GRU — 89.78%** |
-| Best ROC-AUC | **GRU — 0.9595** |
-| Fastest Recorded Time/Epoch | **ANN — 12.60 s** |
-| Best Recurrent Model | **GRU 🏆** |
-
-</div>
+| `length_distribution.png` | Review-length distribution |
+| `rnn_forward_heatmap.png` | Manual RNN hidden states |
+| `training_curves_simplernn.png` | SimpleRNN learning curves |
+| `confusion_matrix_simplernn.png` | SimpleRNN errors |
+| `gradient_norm_simplernn.png` | SimpleRNN gradient experiment |
+| `accuracy_vs_sequence_length_rnn.png` | Sequence-length sensitivity |
+| `gradient_clipping_comparison.png` | Clipping experiment |
+| `training_curves_lstm.png` | LSTM learning curves |
+| `confusion_matrix_lstm.png` | LSTM errors |
+| `gradient_norm_rnn_vs_lstm.png` | RNN vs LSTM gradient experiment |
+| `training_curves_gru.png` | GRU learning curves |
+| `confusion_matrix_gru.png` | GRU errors |
+| `gradient_norms_all_cells.png` | RNN vs LSTM vs GRU gradients |
+| `accuracy_vs_hidden_units.png` | Hidden-unit accuracy sensitivity |
+| `parameters_vs_hidden_units.png` | Parameter growth with hidden units |
+| `results_table.png` | Final model comparison |
+| `roc_curves.png` | Combined ROC analysis |
+| `accuracy_by_length.png` | Accuracy by review length |
+| `training_curves_rnn_lstm_gru.png` | Combined recurrent validation curves |
 
 ---
 
-# 📂 Project Structure
+# 📂 Recommended Repository Structure
 
 ```text
 DL_PR5/
@@ -1349,30 +1192,46 @@ DL_PR5/
 ├── README.md
 ├── requirements.txt
 ├── model_comparison_results.csv
-├── IMDB Dataset.csv
+│
+├── data/
+│   └── IMDB Dataset.csv
 │
 └── plots/
     ├── length_distribution.png
     ├── rnn_forward_heatmap.png
+    ├── training_curves_simplernn.png
+    ├── confusion_matrix_simplernn.png
+    ├── gradient_norm_simplernn.png
+    ├── accuracy_vs_sequence_length_rnn.png
+    ├── gradient_clipping_comparison.png
+    ├── training_curves_lstm.png
+    ├── confusion_matrix_lstm.png
+    ├── gradient_norm_rnn_vs_lstm.png
+    ├── training_curves_gru.png
+    ├── confusion_matrix_gru.png
     ├── gradient_norms_all_cells.png
-    ├── training_curves_rnn_lstm_gru.png
-    ├── roc_curves.png
+    ├── accuracy_vs_hidden_units.png
+    ├── parameters_vs_hidden_units.png
     ├── results_table.png
-    └── accuracy_by_length.png
+    ├── roc_curves.png
+    ├── accuracy_by_length.png
+    └── training_curves_rnn_lstm_gru.png
 ```
+
+> If your notebook currently reads `"IMDB Dataset.csv"` from the project root, either keep the CSV in the root or update the notebook path before moving it into `data/`.
 
 ---
 
-# ⚙️ How to Run
+# ⚙️ Installation & Usage
 
-## 1️⃣ Clone the Repository
+## 1. Clone the Repository
 
 ```bash
 git clone <YOUR-GITHUB-REPOSITORY-URL>
 cd DL_PR5
 ```
 
-## 2️⃣ Create Virtual Environment
+## 2. Create a Virtual Environment
 
 ```bash
 python -m venv venv
@@ -1384,19 +1243,19 @@ python -m venv venv
 venv\Scripts\activate
 ```
 
-### Linux / macOS
+### macOS / Linux
 
 ```bash
 source venv/bin/activate
 ```
 
-## 3️⃣ Install Requirements
+## 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 4️⃣ Start Jupyter Notebook
+## 4. Start Jupyter
 
 ```bash
 jupyter notebook
@@ -1408,11 +1267,13 @@ Open:
 DL_PR5.ipynb
 ```
 
-Then run all cells in order.
+Then run the notebook cells from top to bottom.
 
 ---
 
 # 📦 Requirements
+
+The notebook creates a `requirements.txt` containing:
 
 ```text
 tensorflow
@@ -1426,175 +1287,180 @@ jupyter
 
 ---
 
-# 🛠️ Tools & Technologies
+# 🛠️ Technologies Used
 
-| Technology | Purpose |
+<div align="center">
+
+| Technology | Role |
 |---|---|
-| Python | Main programming language |
-| TensorFlow | Deep-learning framework |
-| Keras | Neural-network API |
-| Pandas | Dataset handling |
-| NumPy | Mathematical/manual RNN and LSTM calculations |
-| Matplotlib | Visualization |
-| Seaborn | Heatmaps/confusion matrices |
-| Scikit-learn | Splitting and evaluation metrics |
-| Jupyter Notebook | Development and experimentation |
-| Git/GitHub | Version control and project presentation |
+| 🐍 Python | Programming |
+| 🧠 TensorFlow | Deep-learning framework |
+| 🔥 Keras | ANN / RNN / LSTM / GRU |
+| 🐼 Pandas | Dataset manipulation |
+| 🔢 NumPy | Manual recurrent calculations |
+| 📊 Matplotlib | Charts |
+| 📉 Seaborn | Heatmaps and confusion matrices |
+| 🤖 Scikit-learn | Split and evaluation metrics |
+| 📓 Jupyter | Notebook development |
+
+</div>
 
 ---
 
-# 🧠 What I Learned
+# 🧠 What This Project Demonstrates
 
-Through this practical I learned:
+### Text Processing
+- duplicate removal;
+- cleaning;
+- review-length analysis;
+- target encoding;
+- tokenization;
+- OOV handling;
+- padding and truncation;
+- leakage-aware train/test workflow.
 
-### Data Preparation
-- Text cleaning
-- Label encoding
-- Train/test splitting
-- Tokenization
-- OOV handling
-- Padding and truncation
-- Data-leakage prevention
+### Recurrent Deep Learning
+- ANN baseline;
+- SimpleRNN;
+- manual RNN forward propagation;
+- one-to-one / one-to-many / many-to-one / many-to-many;
+- LSTM;
+- manual LSTM;
+- Stacked LSTM;
+- GRU.
 
-### Deep Learning
-- Embeddings
-- ANN baseline modeling
-- SimpleRNN
-- LSTM
-- Stacked LSTM
-- GRU
-- Sigmoid binary classification
-
-### Recurrent-Network Mathematics
-- Hidden-state calculation
-- Recurrent weight sharing
-- BPTT
-- Vanishing gradients
-- Exploding gradients
-- Gradient clipping
-- LSTM gates
-- GRU gates
+### Optimization & Diagnostics
+- BPTT;
+- vanishing gradients;
+- exploding gradients;
+- GradientTape;
+- gradient clipping;
+- sequence-length sensitivity;
+- hidden-unit sensitivity;
+- EarlyStopping.
 
 ### Evaluation
-- Accuracy
-- Precision
-- Recall
-- F1 score
-- Confusion matrix
-- ROC curve
-- ROC-AUC
-
-### Model Analysis
-- Sequence-length sensitivity
-- Hidden-unit sensitivity
-- Gradient-flow analysis
-- Review-length analysis
-- False positives
-- False negatives
-- Custom inference
+- accuracy;
+- precision;
+- recall;
+- F1;
+- ROC-AUC;
+- confusion matrices;
+- ROC curves;
+- review-length analysis;
+- false-positive / false-negative analysis;
+- custom text inference.
 
 ---
 
-# 💡 Major Project Insights
+# 💡 Main Findings
 
-### 1. A Simple Model Can Still Be Competitive
+### 1. ANN Is a Strong Baseline
 
-The ANN baseline reached **86.62% accuracy**, showing that a simpler architecture can provide a strong baseline.
+The ANN reaches **86.62%** accuracy and trains quickly in the recorded run, although its Flatten-based design produces a much larger total parameter count.
 
-### 2. Recurrent Architecture Choice Matters
+### 2. SimpleRNN Struggles Most
 
-SimpleRNN achieved only **79.01% accuracy** in the final results, while LSTM and GRU performed substantially better.
+SimpleRNN reaches **79.01%** accuracy and **66.67% recall**, the weakest final performance among the five models.
 
-### 3. More Depth Did Not Automatically Mean Better Performance
+### 3. LSTM Greatly Improves Recall
 
-The Stacked LSTM recorded **88.31% accuracy**, below the single LSTM and GRU in this experiment.
+LSTM reaches **90.86% recall**, the highest recall in the final comparison.
 
-### 4. GRU Provided the Best Final Balance
+### 4. More Layers Do Not Automatically Mean Better Results
 
-GRU achieved:
+Stacked LSTM increases complexity and training time but does not beat the single LSTM or GRU.
+
+### 5. GRU Gives the Best Overall Final Result
+
+GRU reaches:
 
 ```text
-Accuracy : 89.73%
-F1       : 89.78%
-ROC-AUC  : 0.9595
+Accuracy  : 89.73%
+Precision : 89.69%
+Recall    : 89.87%
+F1        : 89.78%
+ROC-AUC   : 0.9595
 ```
 
-while using fewer parameters than the LSTM and Stacked LSTM models.
+### 6. GRU Remains Strong Across Review Lengths
+
+```text
+Short  : 90.17%
+Medium : 89.98%
+Long   : 89.05%
+```
+
+while SimpleRNN falls to **76.67%** on long reviews.
 
 ---
 
 # 🚀 Future Improvements
 
-Possible future extensions include:
+Possible extensions beyond the current notebook include:
 
-- Dropout and recurrent dropout
-- Hyperparameter optimization
-- Different vocabulary sizes
-- Different embedding dimensions
-- More advanced text cleaning
-- Threshold optimization
-- Class-probability calibration
-- Larger sequence-length studies
-- More detailed error analysis
-- REST API deployment
-- Interactive web interface
+- dropout and recurrent dropout;
+- systematic hyperparameter tuning;
+- different vocabulary sizes;
+- different embedding dimensions;
+- threshold optimization;
+- probability calibration;
+- more extensive sarcasm and negation analysis;
+- deployment through Flask/FastAPI/Streamlit;
+- saving the tokenizer and final trained model for production inference.
 
-> This practical intentionally focuses on ANN, SimpleRNN, LSTM and GRU. Attention, Transformers and pretrained embeddings are outside the scope of this implementation.
+> This practical intentionally focuses on ANN, SimpleRNN, LSTM and GRU rather than Transformer or pretrained-language-model architectures.
 
 ---
 
-# 🎥 Project Demo
+# 🎥 Demo Video
 
-Add your final project demo link here:
+Add your project demonstration link here:
 
 ```text
-Demo Video: <YOUR-VIDEO-LINK>
+Demo Video: <YOUR-DEMO-VIDEO-LINK>
 ```
 
-Suggested demo flow:
+A useful demo order is:
 
 ```text
-1. Project Introduction
-2. Dataset & Preprocessing
-3. ANN Baseline
-4. Manual RNN Forward Pass
+1. Project & dataset
+2. Cleaning + tokenization
+3. ANN baseline
+4. Manual RNN
 5. SimpleRNN
-6. BPTT + Gradient Problems
+6. BPTT + gradient experiments
 7. LSTM
 8. GRU
-9. Final Model Comparison
-10. Live Sentiment Prediction
+9. Final comparison
+10. Live predict_sentiment() demo
 ```
 
 ---
 
 # 🏁 Final Conclusion
 
-This project provides an end-to-end study of sentiment analysis using recurrent deep-learning architectures.
+This project builds sentiment analysis from the fundamentals of text preprocessing through increasingly capable recurrent architectures.
 
-The practical begins with raw IMDB text and develops a complete preprocessing pipeline. It then establishes an ANN baseline before exploring SimpleRNN mathematically and experimentally.
+The notebook first prepares IMDB reviews using duplicate removal, text cleaning, train/test splitting, tokenization and padding. It then establishes an ANN baseline and manually demonstrates the hidden-state mathematics of SimpleRNN.
 
-The BPTT section demonstrates why recurrent networks can experience vanishing and exploding gradients. LSTM and GRU are then introduced as gated recurrent architectures designed to improve long-range information handling.
+The BPTT experiments explore the optimization difficulties of recurrent networks, including vanishing and exploding gradients. LSTM introduces a gated cell-state mechanism, while GRU provides a simpler gated alternative.
 
-The final submitted comparison shows:
-
-```text
-ANN Baseline   → 86.62% Accuracy
-SimpleRNN      → 79.01% Accuracy
-LSTM           → 88.68% Accuracy
-Stacked LSTM   → 88.31% Accuracy
-GRU            → 89.73% Accuracy 🏆
-```
-
-Among the evaluated recurrent models, **GRU produced the strongest final result**, with:
+The final comparison is:
 
 ```text
-Test Accuracy → 89.73%
-F1 Score      → 89.78%
-ROC-AUC       → 0.9595
+ANN Baseline  → 86.62% Accuracy
+SimpleRNN     → 79.01% Accuracy
+LSTM          → 88.68% Accuracy
+Stacked LSTM  → 88.31% Accuracy
+GRU           → 89.73% Accuracy 🏆
 ```
 
-The project therefore demonstrates not only how to build recurrent sentiment classifiers, but also how to understand their internal mechanics, evaluate their limitations, compare architectures fairly, and analyze real prediction errors.
+For this notebook, **GRU is the recommended final recurrent model** because it achieves the best overall combination of **accuracy, F1, ROC-AUC, model size and recorded training time among the gated candidates**.
+
+The project also demonstrates an important machine-learning lesson:
+
+> **A good model should not be judged by accuracy alone. Model complexity, recall, F1, ROC-AUC, training cost, error patterns and behaviour on different kinds of input all matter.**
 
 ---
 
@@ -1604,16 +1470,16 @@ The project therefore demonstrates not only how to build recurrent sentiment cla
 
 ## Tushar Vala
 
-### Data Analyst • AI/ML Developer
+### Data Analyst · AI/ML Developer
 
 <br>
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=20&pause=1000&color=00BFFF&center=true&vCenter=true&width=900&lines=Data+%E2%86%92+Sequences+%E2%86%92+Deep+Learning;SimpleRNN+%E2%86%92+LSTM+%E2%86%92+GRU;Understand+the+Model%2C+Not+Just+the+Accuracy;Thanks+for+Visiting+the+Project+%F0%9F%9A%80" alt="Footer Animation" />
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=20&pause=1000&color=00BFFF&center=true&vCenter=true&width=900&lines=Words+%E2%86%92+Sequences+%E2%86%92+Memory+%E2%86%92+Sentiment;Understand+the+Model%2C+Not+Only+the+Accuracy;SimpleRNN+%E2%86%92+LSTM+%E2%86%92+GRU;Thanks+for+Visiting+%F0%9F%9A%80" alt="Footer typing animation" />
 
 <br>
 
-### ⭐ If this project helped you, consider giving the repository a star!
+### ⭐ If you find this project useful, consider starring the repository!
 
-**Made with Python 🐍 + TensorFlow 🧠 + lots of experimentation 📊**
+**Built with Python 🐍 · TensorFlow 🧠 · Keras 🔥 · Experimentation 📊**
 
 </div>
