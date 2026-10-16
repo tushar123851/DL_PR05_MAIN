@@ -1413,31 +1413,6 @@ Possible extensions beyond the current notebook include:
 
 ---
 
-# 🎥 Demo Video
-
-Add your project demonstration link here:
-
-```text
-Demo Video: <YOUR-DEMO-VIDEO-LINK>
-```
-
-A useful demo order is:
-
-```text
-1. Project & dataset
-2. Cleaning + tokenization
-3. ANN baseline
-4. Manual RNN
-5. SimpleRNN
-6. BPTT + gradient experiments
-7. LSTM
-8. GRU
-9. Final comparison
-10. Live predict_sentiment() demo
-```
-
----
-
 # 🏁 Final Conclusion
 
 This project builds sentiment analysis from the fundamentals of text preprocessing through increasingly capable recurrent architectures.
