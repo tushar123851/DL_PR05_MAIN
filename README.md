@@ -44,6 +44,30 @@
 
 ---
 
+<div align="center">
+
+## 🎬 Live Project Demo
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=20&pause=1000&color=7B68EE&center=true&vCenter=true&width=700&lines=See+the+AI+Model+in+Action+%F0%9F%9A%80;RNN+%E2%86%92+LSTM+%E2%86%92+GRU+%F0%9F%A7%A0;Click+Below+to+Watch+the+Full+Demo+%F0%9F%8E%A5" alt="Demo Animation" />
+
+<br><br>
+
+<a href="https://drive.google.com/file/d/1UzkkxfxpbbI28iUOEXHBU3aXa_b8GlC8/view?usp=sharing">
+  <img src="https://img.shields.io/badge/▶%20WATCH%20PROJECT%20DEMO-GOOGLE%20DRIVE-4285F4?style=for-the-badge&logo=googledrive&logoColor=white" alt="Watch Project Demo">
+</a>
+
+<br><br>
+
+<b>🎥 Watch the complete Sentiment Analysis project demonstration</b>
+
+<br>
+
+<sub>✨ Data Preprocessing • SimpleRNN • LSTM • GRU • Model Comparison • Live Prediction ✨</sub>
+
+</div>
+
+---
+
 # 📌 Project Overview
 
 This notebook implements **sentiment analysis on IMDB movie reviews** and progressively builds understanding from basic text preprocessing to gated recurrent neural networks.
